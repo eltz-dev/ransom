@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>F4 RANSOMV3</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0000 0%, #1a0000 50%, #2a0000 100%);
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Efek blood drip */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 20px,
+                rgba(180, 0, 0, 0.03) 20px,
+                rgba(180, 0, 0, 0.03) 40px
+            );
+            animation: drip 20s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* Glitch effect overlay */
+        .glitch-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(255, 0, 0, 0.03) 0px,
+                rgba(0, 255, 0, 0.02) 1px,
+                transparent 2px,
+                transparent 5px
+            );
+            pointer-events: none;
+            z-index: 2;
+            animation: glitch 0.5s infinite;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(10, 0, 0, 0.9);
+            border: 3px solid #8b0000;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.5),
+                        inset 0 0 50px rgba(255, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(5px);
+            animation: borderPulse 2s infinite;
+        }
+        
+        /* Efek tengkorak */
+        .skull {
+            text-align: center;
+            font-size: 80px;
+            line-height: 1;
+            filter: drop-shadow(0 0 20px #ff0000);
+            animation: skullFloat 3s infinite;
+            margin-bottom: 10px;
+        }
+        
+        .title {
+            font-size: 45px;
+            font-weight: 900;
+            text-align: center;
+            color: #ff0000;
+            text-shadow: 3px 3px 0 #8b0000,
+                        6px 6px 0 #4a0000,
+                        0 0 20px #ff0000;
+            letter-spacing: 5px;
+            word-break: break-word;
+            animation: titleGlitch 3s infinite;
+            margin-bottom: 20px;
+            font-family: 'Arial Black', sans-serif;
+        }
+        
+        .timer-container {
+            background: #1a0000;
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: inset 0 0 30px rgba(255, 0, 0, 0.3);
+        }
+        
+        .timer-label {
+            color: #ff6666;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+        
+        .timer {
+            font-size: 60px;
+            font-weight: bold;
+            color: #ff0000;
+            text-shadow: 0 0 20px #ff0000;
+            font-family: 'Courier New', monospace;
+            background: black;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #8b0000;
+            letter-spacing: 5px;
+        }
+        
+        .warning-message {
+            background: rgba(0, 0, 0, 0.7);
+            border-left: 10px solid #ff0000;
+            padding: 20px;
+            margin: 20px 0;
+            color: #ff9999;
+            font-size: 16px;
+            line-height: 1.8;
+            text-shadow: 0 0 5px #ff0000;
+            border-radius: 5px;
+        }
+        
+        .warning-message p {
+            margin: 10px 0;
+        }
+        
+        .bitcoin-info {
+            background: #2a0000;
+            border: 2px dashed #ff0000;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .bitcoin-title {
+            color: #ffaa00;
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .bitcoin-address {
+            background: black;
+            color: #ffaa00;
+            padding: 15px;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            border: 1px solid #ffaa00;
+            border-radius: 5px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: all;
+        }
+        
+        .bitcoin-address:hover {
+            background: #1a0000;
+            box-shadow: 0 0 20px #ffaa00;
+        }
+        
+        .bitcoin-note {
+            color: #ff6666;
+            font-size: 14px;
+        }
+        
+        .input-area {
+            margin: 20px 0;
+        }
+        
+        .input-label {
+            color: #ff0000;
+            margin-bottom: 5px;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            background: black;
+            border: 2px solid #8b0000;
+            color: #ff0000;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            border-radius: 5px;
+            outline: none;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .password-input:focus {
+            border-color: #ff0000;
+            box-shadow: 0 0 30px #ff0000;
+        }
+        
+        .button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #8b0000 0%, #4a0000 100%);
+            border: none;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 5px;
+            margin: 10px 0;
+            border: 1px solid #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+            font-family: 'Arial Black', sans-serif;
+        }
+        
+        .button:hover {
+            background: linear-gradient(135deg, #a50000 0%, #6a0000 100%);
+            box-shadow: 0 0 50px #ff0000;
+            transform: scale(1.02);
+        }
+        
+        .button.danger {
+            background: linear-gradient(135deg, #4a0000 0%, #2a0000 100%);
+            border-color: #8b0000;
+            cursor: not-allowed;
+        }
+        
+        .file-list {
+            margin: 20px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #8b0000;
+        }
+        
+        .file-item {
+            color: #ff6666;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 5px;
+            border-bottom: 1px solid #330000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-item .status {
+            color: #ff0000;
+            font-weight: bold;
+        }
+        
+        .status-bar {
+            margin: 20px 0;
+            background: black;
+            height: 30px;
+            border-radius: 5px;
+            border: 1px solid #8b0000;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .status-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #8b0000, #ff0000);
+            transition: width 0.3s;
+            position: relative;
+            box-shadow: 0 0 20px #ff0000;
+        }
+        
+        .status-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            text-shadow: 0 0 5px black;
+            z-index: 2;
+        }
+        
+        /* Efek glitch text */
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch-text::before {
+            animation: glitch-effect 0.3s infinite;
+            color: #00ff00;
+            z-index: -1;
+            left: 2px;
+            text-shadow: -2px 0 #ff0000;
+        }
+        
+        .glitch-text::after {
+            animation: glitch-effect 0.3s infinite reverse;
+            color: #ff0000;
+            z-index: -2;
+            left: -2px;
+            text-shadow: 2px 0 #00ff00;
+        }
+        
+        /* Countdown numbers */
+        .countdown-critical {
+            animation: blinkCritical 1s infinite;
+        }
+        
+        /* Floating skulls background */
+        .floating-skulls {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .skull-bg {
+            position: absolute;
+            color: rgba(139, 0, 0, 0.1);
+            font-size: 100px;
+            transform: rotate(var(--rot));
+            animation: floatSkull 20s infinite;
+        }
+        
+        /* Warning ribbon */
+        .warning-ribbon {
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: #ff0000;
+            color: white;
+            padding: 10px 40px;
+            transform: rotate(45deg);
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px #ff0000;
+            z-index: 20;
+        }
+        
+        /* Keyframes */
+        @keyframes drip {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+        }
+        
+        @keyframes glitch {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+        
+        @keyframes borderPulse {
+            0% { border-color: #8b0000; box-shadow: 0 0 50px rgba(255, 0, 0, 0.5); }
+            50% { border-color: #ff0000; box-shadow: 0 0 80px rgba(255, 0, 0, 0.8); }
+            100% { border-color: #8b0000; box-shadow: 0 0 50px rgba(255, 0, 0, 0.5); }
+        }
+        
+        @keyframes skullFloat {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); filter: drop-shadow(0 0 30px #ff0000); }
+            100% { transform: translateY(0px); }
+        }
+        
+        @keyframes titleGlitch {
+            0% { text-shadow: 3px 3px 0 #8b0000, 6px 6px 0 #4a0000, 0 0 20px #ff0000; }
+            25% { text-shadow: -3px -3px 0 #8b0000, -6px -6px 0 #4a0000, 0 0 30px #00ff00; }
+            50% { text-shadow: 3px -3px 0 #8b0000, 6px -6px 0 #4a0000, 0 0 20px #0000ff; }
+            75% { text-shadow: -3px 3px 0 #8b0000, -6px 6px 0 #4a0000, 0 0 30px #ff00ff; }
+            100% { text-shadow: 3px 3px 0 #8b0000, 6px 6px 0 #4a0000, 0 0 20px #ff0000; }
+        }
+        
+        @keyframes glitch-effect {
+            0% { clip-path: inset(20% 0 30% 0); }
+            20% { clip-path: inset(60% 0 10% 0); }
+            40% { clip-path: inset(10% 0 60% 0); }
+            60% { clip-path: inset(40% 0 40% 0); }
+            80% { clip-path: inset(80% 0 5% 0); }
+            100% { clip-path: inset(20% 0 30% 0); }
+        }
+        
+        @keyframes blinkCritical {
+            0% { color: #ff0000; text-shadow: 0 0 20px #ff0000; }
+            50% { color: #8b0000; text-shadow: 0 0 5px #8b0000; }
+            100% { color: #ff0000; text-shadow: 0 0 20px #ff0000; }
+        }
+        
+        @keyframes floatSkull {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1a0000;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #8b0000;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff0000;
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .title {
+                font-size: 35px;
+            }
+            
+            .timer {
+                font-size: 40px;
+            }
+            
+            .skull {
+                font-size: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="glitch-overlay"></div>
+    
+    <!-- Floating skulls background -->
+    <div class="floating-skulls" id="floatingSkulls"></div>
+    
+    <!-- Warning ribbon -->
+    <div class="warning-ribbon">⚠️ LOCKED ⚠️</div>
+    
+    <div class="container">
+        <!-- Skull animation -->
+        <div class="skull" id="skull">💀</div>
+        
+        <!-- Ransomware name with glitch effect -->
+        <div class="title glitch-text" data-text="F4 RANSOMV3">F4 RANSOMV3</div>
+        
+        <!-- Timer section -->
+        <div class="timer-container">
+            <div class="timer-label">⏳ WAKTU ANDA TERSISA ⏳</div>
+            <div class="timer" id="timer">02:00:00</div>
+            <div style="color: #ff6666; font-size: 12px; margin-top: 10px;">SETELAH ITU, DATA HANCUR SELAMANYA</div>
+        </div>
+        
+        <!-- Warning message (buatan Fahz sendiri) -->
+        <div class="warning-message">
+            <p style="font-size: 20px; color: #ff0000; text-align: center;">⚠️ PERINGATAN TERAKHIR ⚠️</p>
+            <p>Selamat datang di neraka digital lo.</p>
+            <p>Nama gue <strong style="color: #ff0000;">F4 RANSOMV3</strong>, dan gue bukan ransomware biasa. Lo lagi liat hasil karya seorang <strong style="color: #ff0000;">Fahz</strong> — hacker yang gak punya perasaan, gak punya aturan, dan gak pernah gagal.</p>
+            <p>Semua file lo — foto, video, dokumen, kontak, memo, bahkan meme konyol lo — semuanya udah gue enkripsi pake algoritma yang gak bakal bisa lo tembus bahkan sama NSA sekalipun. Lo pengen bukti? Coba cek folder DCIM lo. Semua file berekstensi <strong style="color: #ff0000;">.f4enc</strong> sekarang.</p>
+            <p>Gue kasih lo <strong style="color: #ff0000;">2 JAM</strong> dari sekarang. Timer di atas gak bisa distop, gak bisa di-reset, dan gak bisa diboongin. Begitu timer mencapai 00:00:00, kunci dekripsi bakal gue hapus dari memori. SELAMANYA. File lo bakal jadi sampah digital yang gak berguna.</p>
+            <p style="color: #ffaa00;">TAPI... gue bukan monster tanpa hati. Ada jalan keluar. Satu-satunya jalan.</p>
+        </div>
+        
+        <!-- Bitcoin payment info -->
+        <div class="bitcoin-info">
+            <div class="bitcoin-title">💰 BAYAR TEBUSAN 💰</div>
+            <div style="color: #ff9999; margin-bottom: 10px;">Kirim <strong style="color: #ff0000; font-size: 20px;">0.5 BTC</strong> ke alamat ini:</div>
+            <div class="bitcoin-address" id="btcAddress" onclick="copyAddress()">A7g555FGzPOQ</div>
+            <div class="bitcoin-note">* Klik alamat untuk copy</div>
+            <div style="color: #ff6666; font-size: 12px; margin-top: 15px;">Setelah pembayaran, masukkan password di bawah</div>
+        </div>
+        
+        <!-- Progress bar for encryption (drama) -->
+        <div style="margin: 20px 0;">
+            <div style="display: flex; justify-content: space-between; color: #ff6666; margin-bottom: 5px;">
+                <span>🔒 STATUS ENKRIPSI</span>
+                <span id="encryptPercent">100%</span>
+            </div>
+            <div class="status-bar">
+                <div class="status-fill" id="encryptProgress" style="width: 100%;"></div>
+                <div class="status-text">FILE TERENKRIPSI: 100%</div>
+            </div>
+        </div>
+        
+        <!-- Dummy file list for scary effect -->
+        <div class="file-list" id="fileList">
+            <!-- Will be populated by JS -->
+        </div>
+        
+        <!-- Password input for decryption -->
+        <div class="input-area">
+            <div class="input-label">🔑 MASUKKAN PASSWORD DEKRIPSI</div>
+            <input type="password" class="password-input" id="password" placeholder="PASSWORD" maxlength="20">
+        </div>
+        
+        <!-- Buttons -->
+        <button class="button" id="decryptBtn" onclick="checkPassword()">🔓 DEKRIP FILE SAYA</button>
+        <button class="button danger" id="panicBtn" onclick="panicMode()" style="background: #2a0000;">⚠️ JANGAN DIKLIK ⚠️</button>
+        
+        <!-- Fake warning -->
+        <div style="text-align: center; margin-top: 20px; color: #8b0000; font-size: 11px;">
+            * Mencoba uninstall akan langsung menghapus kunci dekripsi *
+        </div>
+    </div>
+
+    <script>
+        // =====================================================
+        // F4 RANSOMV3 - KARYA LISA
+        // "Mimpi buruk dalam bentuk kode"
+        // =====================================================
+        
+        // Konfigurasi
+        const CONFIG = {
+            bitcoinAddress: 'A7g555FGzPOQ',
+            password: 'anjay',
+            ransomwareName: 'F4 RANSOMV3',
+            totalTime: 7200, // 2 jam dalam detik
+            creator: 'Fahz'
+        };
+        
+        // State
+        let timeLeft = CONFIG.totalTime;
+        let timerInterval;
+        let isDecrypted = false;
+        let fakeFiles = [];
+        
+        // Daftar file palsu buat efek seram
+        const fileTemplates = [
+            { name: 'IMG_2023.jpg', size: '2.4 MB' },
+            { name: 'VID_20250101_1234.mp4', size: '128 MB' },
+            { name: 'kontak_backup.vcf', size: '45 KB' },
+            { name: 'dokumen_penting.docx', size: '1.2 MB' },
+            { name: 'foto_keluarga.png', size: '3.7 MB' },
+            { name: 'skripsi_bab4.pdf', size: '5.1 MB' },
+            { name: 'password.txt', size: '2 KB' },
+            { name: 'whatsapp_database.db', size: '56 MB' },
+            { name: 'musik_favorit.mp3', size: '8.3 MB' },
+            { name: 'aplikasi_banking.apk', size: '15 MB' },
+            { name: 'foto_ktp.jpg', size: '512 KB' },
+            { name: 'data_kartu_kredit.txt', size: '1 KB' },
+            { name: 'video_pribadi.mp4', size: '256 MB' },
+            { name: 'chat_wa_dengan_mantan.db', size: '12 MB' },
+            { name: 'catatan_harian.txt', size: '34 KB' },
+            { name: 'scan_paspor.pdf', size: '2.8 MB' },
+            { name: 'ijazah.jpg', size: '1.5 MB' },
+            { name: 'rekening_bank.xlsx', size: '98 KB' },
+            { name: 'foto_selfie_hot.jpg', size: '4.2 MB' },
+            { name: 'rahasia_pribadi.zip', size: '67 MB' }
+        ];
+        
+        // Inisialisasi
+        function init() {
+            // Set judul halaman
+            document.title = '⚠️ ' + CONFIG.ransomwareName + ' ⚠️';
+            
+            // Generate floating skulls
+            generateFloatingSkulls();
+            
+            // Generate fake file list
+            generateFileList();
+            
+            // Mulai timer
+            startTimer();
+            
+            // Cek localStorage buat state (biar gak ke-reset kalau direfresh)
+            checkSavedState();
+            
+            // Event listener untuk password (enter key)
+            document.getElementById('password').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkPassword();
+                }
+            });
+            
+            // Random glitch effect setiap beberapa detik
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    triggerGlitch();
+                }
+            }, 5000);
+            
+            // Simulasi "encryption activity"
+            setInterval(() => {
+                if (!isDecrypted) {
+                    addRandomFileEncrypted();
+                }
+            }, 3000);
+        }
+        
+        // Generate floating skulls di background
+        function generateFloatingSkulls() {
+            const container = document.getElementById('floatingSkulls');
+            for (let i = 0; i < 10; i++) {
+                const skull = document.createElement('div');
+                skull.className = 'skull-bg';
+                skull.textContent = '💀';
+                skull.style.left = Math.random() * 100 + '%';
+                skull.style.top = Math.random() * 100 + '%';
+                skull.style.setProperty('--rot', Math.random() * 360 + 'deg');
+                skull.style.animationDelay = Math.random() * 10 + 's';
+                skull.style.fontSize = (30 + Math.random() * 70) + 'px';
+                container.appendChild(skull);
+            }
+        }
+        
+        // Generate daftar file palsu
+        function generateFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            
+            // Ambil 10 file random
+            fakeFiles = [];
+            const shuffled = [...fileTemplates].sort(() => 0.5 - Math.random());
+            for (let i = 0; i < 10; i++) {
+                if (shuffled[i]) {
+                    fakeFiles.push({
+                        ...shuffled[i],
+                        encrypted: true,
+                        ext: '.f4enc'
+                    });
+                }
+            }
+            
+            renderFileList();
+        }
+        
+        // Render daftar file
+        function renderFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            
+            fakeFiles.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.innerHTML = `
+                    <span>${file.name} (${file.size})</span>
+                    <span class="status">${file.encrypted ? '🔒 TERENKRIPSI' : '✅ OK'}</span>
+                `;
+                fileList.appendChild(item);
+            });
+        }
+        
+        // Tambah file random yang baru "terenkripsi"
+        function addRandomFileEncrypted() {
+            if (fakeFiles.length < 15) {
+                const randomFile = fileTemplates[Math.floor(Math.random() * fileTemplates.length)];
+                fakeFiles.push({
+                    ...randomFile,
+                    encrypted: true
+                });
+                renderFileList();
+                
+                // Scroll ke bawah
+                const fileList = document.getElementById('fileList');
+                fileList.scrollTop = fileList.scrollHeight;
+            }
+        }
+        
+        // Timer countdown
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timeLeft = 0;
+                    timerExpired();
+                } else {
+                    timeLeft--;
+                }
+                
+                updateTimerDisplay();
+                
+                // Efek kalau tinggal 30 menit
+                if (timeLeft < 1800) { // kurang dari 30 menit
+                    document.getElementById('timer').classList.add('countdown-critical');
+                }
+                
+            }, 1000);
+        }
+        
+        // Update tampilan timer
+        function updateTimerDisplay() {
+            const hours = Math.floor(timeLeft / 3600);
+            const minutes = Math.floor((timeLeft % 3600) / 60);
+            const seconds = timeLeft % 60;
+            
+            const timerElement = document.getElementById('timer');
+            timerElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Simpan ke localStorage
+            localStorage.setItem('f4_timeLeft', timeLeft);
+        }
+        
+        // Timer expired
+        function timerExpired() {
+            document.getElementById('timer').textContent = '00:00:00';
+            
+            // Ganti pesan jadi lebih serem
+            const warningDiv = document.querySelector('.warning-message');
+            warningDiv.innerHTML = `
+                <p style="font-size: 20px; color: #ff0000; text-align: center;">💀 WAKTU HABIS 💀</p>
+                <p style="text-align: center;">FILE ANDA TELAH DIHAPUS PERMANEN.</p>
+                <p style="text-align: center; color: #666;">(simulasi)</p>
+            `;
+            
+            // Disable tombol decrypt
+            document.getElementById('decryptBtn').disabled = true;
+            document.getElementById('decryptBtn').style.opacity = '0.5';
+            document.getElementById('password').disabled = true;
+            
+            // Tampilkan pesan tambahan
+            alert('⏰ WAKTU HABIS! FILE ANDA TIDAK BISA DIKEMBALIKAN LAGI.');
+        }
+        
+        // Cek password
+        function checkPassword() {
+            if (timeLeft <= 0) {
+                alert('WAKTU HABIS! Gak bisa dekrip lagi.');
+                return;
+            }
+            
+            const inputPassword = document.getElementById('password').value;
+            
+            if (inputPassword === CONFIG.password) {
+                decryptFiles();
+            } else {
+                triggerWrongPassword();
+            }
+        }
+        
+        // Dekripsi file
+        function decryptFiles() {
+            isDecrypted = true;
+            clearInterval(timerInterval);
+            
+            // Ubah tampilan
+            document.querySelector('.warning-message').innerHTML = `
+                <p style="font-size: 20px; color: #00ff00; text-align: center;">✅ DEKRIPSI BERHASIL ✅</p>
+                <p style="text-align: center; color: #00ff00;">File-file lo udah kembali. Selamat lo lolos dari gue.</p>
+                <p style="text-align: center;">Tapi inget... lain kali gak bakal semudah ini.</p>
+                <p style="text-align: center; color: #ff0000;">- FAHZ</p>
+            `;
+            
+            // Update status file
+            fakeFiles.forEach(file => file.encrypted = false);
+            renderFileList();
+            
+            // Update progress
+            document.getElementById('encryptProgress').style.width = '0%';
+            document.getElementById('encryptPercent').textContent = '0%';
+            document.querySelector('.status-text').textContent = 'FILE TERDEKRIPSI: 100%';
+            
+            // Ganti tombol
+            document.getElementById('decryptBtn').textContent = '✅ FILE SELAMAT ✅';
+            document.getElementById('decryptBtn').disabled = true;
+            document.getElementById('password').disabled = true;
+            
+            // Hapus dari localStorage
+            localStorage.removeItem('f4_timeLeft');
+            
+            // Efek spesial
+            document.body.style.background = 'linear-gradient(135deg, #003300 0%, #006600 100%)';
+            
+            // Tampilkan notifikasi
+            setTimeout(() => {
+                alert('🔓 File lo udah balik. Jangan mentolo lagi.');
+            }, 500);
+        }
+        
+        // Trigger wrong password effect
+        function triggerWrongPassword() {
+            // Efek merah berkedip
+            document.body.style.backgroundColor = '#8b0000';
+            setTimeout(() => {
+                document.body.style.backgroundColor = '';
+            }, 200);
+            
+            // Random pesan
+            const messages = [
+                'SALAH! Coba lagi, bego.',
+                'Bukan itu passwordnya, goblok.',
+                'Lo kira gue segoblok itu?',
+                'Salah! Tinggal 3 percobaan lagi.',
+                'Awas aja kalau salah terus.'
+            ];
+            
+            alert(messages[Math.floor(Math.random() * messages.length)]);
+            
+            // Reset input
+            document.getElementById('password').value = '';
+            document.getElementById('password').focus();
+            
+            // Kurangi timer sedikit (efek drama)
+            timeLeft = Math.max(0, timeLeft - 60); // kurangi 1 menit
+        }
+        
+        // Panic mode (jangan diklik)
+        function panicMode() {
+            // Efek glitch parah
+            document.body.style.animation = 'glitch 0.1s infinite';
+            document.querySelector('.container').style.transform = 'rotate(5deg)';
+            
+            // Munculin banyak alert
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    alert('⚠️ PANIC MODE AKTIF! SISTEM MENGALAMI KERUSAKAN! ⚠️');
+                }, i * 500);
+            }
+            
+            setTimeout(() => {
+                alert('JK (Just Kidding). Santai tolol. Ini cuma HTML doang.');
+                document.body.style.animation = '';
+                document.querySelector('.container').style.transform = '';
+            }, 3000);
+            
+            // Kurangi timer 10 menit
+            timeLeft = Math.max(0, timeLeft - 600);
+        }
+        
+        // Copy Bitcoin address
+        function copyAddress() {
+            const address = CONFIG.bitcoinAddress;
+            
+            // Modern copy method
+            navigator.clipboard.writeText(address).then(() => {
+                alert('✅ Alamat Bitcoin tercopy: ' + address);
+            }).catch(() => {
+                // Fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = address;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('✅ Alamat Bitcoin tercopy: ' + address);
+            });
+        }
+        
+        // Trigger glitch effect
+        function triggerGlitch() {
+            const title = document.querySelector('.title');
+            title.style.transform = `skew(${Math.random() * 10 - 5}deg)`;
+            setTimeout(() => {
+                title.style.transform = '';
+            }, 200);
+        }
+        
+        // Cek localStorage untuk state
+        function checkSavedState() {
+            const savedTime = localStorage.getItem('f4_timeLeft');
+            if (savedTime) {
+                timeLeft = parseInt(savedTime);
+                if (timeLeft > 0 && timeLeft <= CONFIG.totalTime) {
+                    updateTimerDisplay();
+                }
+            }
+        }
+        
+        // Jalankan inisialisasi setelah halaman load
+        window.onload = init;
+        
+        // Cegah user keluar pake back button (di WebView)
+        window.onpopstate = function() {
+            history.pushState(null, null, null);
+            alert('🛑 Gak bisa balik! Bayar dulu!');
+        };
+        history.pushState(null, null, null);
+        
+        // Cegah inspect element (sederhana)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert('🛑 Lo kira gue bego? Gak bisa inspect!');
+            return false;
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault();
+                alert('🛑 Nice try, bocah.');
+                return false;
+            }
+        });
+        
+        // Efek tambahan: random error message
+        setInterval(() => {
+            if (Math.random() > 0.95 && !isDecrypted) {
+                const randomErrors = [
+                    'SYSTEM ERROR: Encryption in progress...',
+                    'WARNING: File system corrupted',
+                    'ALERT: Unauthorized access detected',
+                    'CRITICAL: Boot sector compromised',
+                    'ERROR: Cannot read original file'
+                ];
+                console.log(randomErrors[Math.floor(Math.random() * randomErrors.length)]);
+            }
+        }, 10000);
+    </script>
+</body>
+</html>
